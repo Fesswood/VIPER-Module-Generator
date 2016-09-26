@@ -1,5 +1,5 @@
 # VIPER-Module-Generator
-The plugin generate all class for module by VIPER architecture(or Clean Architecture) for Android project.
+This is a Android Studio's plugin generate all class for module by VIPER architecture(or Android Clean Architecture) for Android project.
 You can customize any template for class generation or use it separately.</br>
 
 The plugin generate the next classes of module:
