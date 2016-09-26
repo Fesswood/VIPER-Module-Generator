@@ -1,0 +1,37 @@
+package ##CURRENTPACKAGE##;
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.View;
+
+
+
+@Layout(id = R.layout.##LOWERMODULENAME##_activity_layout)
+public class ##MODULENAME##Activity extends BaseActivity implements ##MODULENAME##Router, ##MODULENAME##ComponentProvider{
+    private static final String MAIN_TAG = "main_tag";
+
+
+    private ##MODULENAME##Component m##MODULENAME##Component;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+       ~~USEFRAGMENT getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, new ##MODULENAME##Fragment(), MAIN_TAG)
+                .commit();~~
+
+        m##MODULENAME##Component =
+                Dagger##MODULENAME##Component
+                        .builder()
+                        .##LOWERMODULENAME##DataModule(new ##MODULENAME##Module())
+                        .##LOWERMODULENAME##DomainModule(new ##MODULENAME##Module())
+                        .build();
+    }
+
+    @Override
+    public ##MODULENAME##Component getComponent() {
+        return mMainActivityComponent;
+    }
+
+}

@@ -1,0 +1,19 @@
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import dagger.Module;
+import dagger.Provides;
+
+@Module
+public class MainDataModule {
+    public static final String ${NAME}_REPOSITORY = "${NAME}_REPOSITORY";
+
+    @Singleton
+    @Provides
+    @Named(${NAME}_REPOSITORY)
+    public ${NAME}Repository ${NAME}RepositoryImpl() {
+        return new ${NAME}RepositoryImpl();
+    }
+
+}

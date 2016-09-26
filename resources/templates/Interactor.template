@@ -1,0 +1,49 @@
+package goodline.info.androidservice.domain.main.taskInfo;
+
+import android.util.Log;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import rx.Observable;
+import rx.Scheduler;
+import rx.Subscriber;
+
+public class ##MODULENAME##Interactor extends Interactor<##MODULENAME##> {
+
+
+    private static final String TAG = ##MODULENAME##Interactor.class.getSimpleName();
+    private final ##MODULENAME##RepositoryImpl mRepository;
+    private String mIdTask;
+
+    @Inject
+    public ##MODULENAME##Interactor(@Named(MainDomainModule.JOB) Scheduler jobScheduler,
+                              @Named(MainDomainModule.UI) Scheduler uiScheduler,
+                              @Named(MainDataModule.TASK_INFO) ##MODULENAME##RepositoryImpl repository) {
+        super(jobScheduler, uiScheduler);
+        mRestApi = new ##MODULENAME##RestApiImpl();
+        mRepository = repository;
+    }
+
+    public void executeRequest(String idTask, Subscriber<##MODULENAME##> subscriber) {
+        mIdTask = idTask;
+        executeRequest(subscriber);
+    }
+
+    @Override
+    public void executeRequest(Subscriber<##MODULENAME##> subscriber) {
+        mRepository.open();
+    }
+
+
+    @Override
+    protected Observable<##MODULENAME##> prepareRequest() {
+        return mRestApi.taskInfo(mIdTask);
+    }
+
+    @Override
+    public void unsubscribe() {
+        super.unsubscribe();
+        mRepository.close();
+    }
+}

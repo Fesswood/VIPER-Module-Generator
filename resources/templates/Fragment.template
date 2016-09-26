@@ -1,0 +1,45 @@
+package ##CURRENTPACKAGE##;
+
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+
+import javax.inject.Inject;
+
+@Layout(id = R.layout.fragment_##LOWERMODULENAME##)
+public class ##MODULENAME##Fragment extends BaseFragment implements ##MODULENAME##View {
+
+    @Inject
+    protected ##MODULENAME##Presenter m##MODULENAME##Presenter;
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setRetainInstance(true);
+        ##MODULENAME##Activity ##LOWERMODULENAME##Activity = (##MODULENAME##Activity) getActivity();
+        //noinspection unchecked
+        getPresenter().setRouter(##MODULENAME##Activity);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //noinspection unchecked
+        getPresenter().setRouter(null);
+    }
+
+    @NonNull
+    @Override
+    protected BasePresenter getPresenter() {
+        return m##MODULENAME##Presenter;
+    }
+
+    @Override
+    protected void inject() {
+        getActivityComponent().inject(this);
+    }
+
+    public ##MODULENAME##ActivityComponent getActivityComponent() {
+        return ((##MODULENAME##Activity) getActivity()).getComponent();
+    }
+
+}

@@ -1,0 +1,27 @@
+#if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "")package ${PACKAGE_NAME};#end
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import dagger.Module;
+import dagger.Provides;
+
+
+#if (${BASE_PACKAGE_NAME} && ${BASE_PACKAGE_NAME} != "")
+import ${BASE_PACKAGE_NAME}.data.db.common.RepositoryBaseImpl;
+#end
+
+
+#parse("File Header.java")
+@Module
+public class ${NAME}DataModule {
+    public static final String ${UPPER_CASE_NAME}_REPOSITORY = "${UPPER_CASE_NAME}_REPOSITORY";
+
+    @Singleton
+    @Provides
+    @Named(${UPPER_CASE_NAME}_REPOSITORY)
+    public RepositoryBaseImpl ${NAME}RepositoryImpl() {
+        return new ${NAME}RepositoryImpl();
+    }
+
+}

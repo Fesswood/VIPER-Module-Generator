@@ -1,0 +1,58 @@
+#if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "")package ${PACKAGE_NAME};#end
+
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import javax.inject.Inject;
+
+
+#if (${BASE_PACKAGE_NAME} && ${BASE_PACKAGE_NAME} != "")
+import ${BASE_PACKAGE_NAME}.R;
+import ${BASE_PACKAGE_NAME}.presentation.common.BaseFragment;
+import ${BASE_PACKAGE_NAME}.presentation.common.BasePresenter;
+import ${BASE_PACKAGE_NAME}.presentation.common.Layout;
+#end
+
+
+/**
+ * Created by Ilia
+ * on 12.05.16
+ */
+#parse("File Header.java")
+@Layout(id = R.layout.fragment_${LOWER_CASE_NAME})
+public class  ${NAME}Fragment extends BaseFragment implements  ${NAME}View {
+
+    @Inject
+    protected  ${NAME}Presenter m${NAME}Presenter;
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setRetainInstance(true);
+         ${NAME}Activity ${LOWER_NAME}Activity = ( ${NAME}Activity) getActivity();
+        //noinspection unchecked
+        getPresenter().setRouter( ${NAME}Activity);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //noinspection unchecked
+        getPresenter().setRouter(null);
+    }
+
+    @NonNull
+    @Override
+    protected BasePresenter getPresenter() {
+        return m ${NAME}Presenter;
+    }
+
+    @Override
+    protected void inject() {
+        getActivityComponent().inject(this);
+    }
+
+    public ${NAME}ActivityComponent getActivityComponent() {
+        return (( ${NAME}Activity) getActivity()).getComponent();
+    }
+
+}

@@ -1,0 +1,28 @@
+package ##CURRENTPACKAGE##;
+
+import rx.Observable;
+import rx.Scheduler;
+
+public class ##MODULENAME##RepositoryImpl extends DbImpl<RESULT_TYPE, PARAM_TYPE> {
+
+    @Override
+    public Observable<RESULT_TYPE> getAllDb(Scheduler scheduler) {
+        RESULT_TYPE taskInfo = new RESULT_TYPE();
+
+        return Observable.just(taskInfo);/*taskInfoRealm)
+                .map(new RESULT_TYPEOperation()::createObjectFromDb)
+                .asObservable(*/
+    }
+
+    @Override
+    public void saveAllDb(RESULT_TYPE models) {
+//        getRealm().executeTransaction(realm -> Observable.just(models)
+//                .map(new RESULT_TYPEOperation()::createDbFromObject)
+//                .subscribe(realm::copyToRealmOrUpdate));
+    }
+
+    @Override
+    public boolean isEmpty(PARAM_TYPE taskId) {
+        return false;//getRealm().where(RESULT_TYPERealm.class).equalTo("idTask", taskId).findFirst() == null;
+    }
+}

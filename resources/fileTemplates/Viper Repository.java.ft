@@ -1,0 +1,30 @@
+#if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "")package ${PACKAGE_NAME};#end
+
+import rx.Observable;
+import rx.Scheduler;
+
+#if (${BASE_PACKAGE_NAME} && ${BASE_PACKAGE_NAME} != "")
+import ${BASE_PACKAGE_NAME}.data.db.common.RepositoryBaseImpl;
+#end
+
+public class ${NAME}RepositoryImpl extends RepositoryBaseImpl<${MODEL_NAME}, String> {
+
+    private static final String TAG = TaskDescriptionRepositoryImpl.class.getSimpleName();
+
+    @Override
+    public Observable<${MODEL_NAME}> getAllDb(Scheduler scheduler) {
+        ${MODEL_NAME} taskInfo = new ${MODEL_NAME}();
+        return Observable.just(taskInfo);
+    }
+
+    @Override
+    public void saveAllDb(RESULT_TYPE models) {
+        Log.d(TAG, "saveAllDb() called with: models = [" + models + "]");
+    }
+
+    @Override
+    public boolean isEmpty(String params) {
+        Log.d(TAG, "isEmpty() called with: taskId = [" + params + "]");
+        return false;
+    }
+}

@@ -1,0 +1,5 @@
+package ##CURRENTPACKAGE##;
+
+
+public interface ##MODULENAME##View extends BaseView{
+}

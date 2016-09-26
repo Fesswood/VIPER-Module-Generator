@@ -1,0 +1,51 @@
+<idea-plugin version="2">
+  <id>com.github.fesswood.ViperModuleGenerator</id>
+  <name>VIPER Module Generator</name>
+  <version>1.0</version>
+  <vendor email="fesswoodwork@gmail.com" url="http://www.github.com/fesswood">Fesswood</vendor>
+
+  <description><![CDATA[
+      The plugin generate all class for module by VIPER architecture for Android project(or Clean Architecture).<br>
+      You can customize any template for class generation or use it separately.</br>
+      The plugin generate the next classes of module:
+      <ul>
+      <li>Activity</li>
+      <li>Fragment</li>
+      <li>Presenter</li>
+      <li>Interactor</li>
+      <li>Repository</li>
+      </ul>
+      And abstraction:
+      <ul>
+      <li>View</li>
+      <li>Router</li>
+      </ul>
+    ]]></description>
+
+  <change-notes><![CDATA[
+      Added base functionality of module creation.
+    ]]>
+  </change-notes>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+  <idea-version since-build="141.0"/>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+  </extensions>
+
+  <actions>
+    <!-- Add your actions here -->
+    <action id="CreateClassViper" class="com.github.fesswood.domain.action.ActionViperClassGenerator" text="Generate Viper Module">
+       <add-to-group group-id="NewGroup" anchor="last"/>
+    </action>
+
+  </actions>
+
+</idea-plugin>

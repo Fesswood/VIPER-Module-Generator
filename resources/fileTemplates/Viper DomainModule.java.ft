@@ -1,0 +1,32 @@
+#if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "")package ${PACKAGE_NAME};#end
+
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import javax.inject.Named;
+
+import dagger.Module;
+import dagger.Provides;
+import rx.Scheduler;
+
+#if (${BASE_PACKAGE_NAME} && ${BASE_PACKAGE_NAME} != "")
+import ${BASE_PACKAGE_NAME}.domain.common.Interactor;
+import ${BASE_PACKAGE_NAME}.presentation.inject.common.DomainModule;
+#end
+
+
+#parse("File Header.java")
+@Module
+public class ${NAME}DomainModule extends DomainModule {
+
+    @Provides
+    @Named("${NAME}Interactor")
+    public Interactor<${NAME}> provideTaskListInteractor(
+            @Named(${NAME}DomainModule.JOB) Scheduler jobScheduler,
+            @Named(${NAME}DomainModule.UI) Scheduler uiScheduler,
+            @Named(${NAME}DataModule.${UPPER_CASE_NAME}_REPOSITORY) ${NAME}Repository repository) {
+        return new ${NAME}Interactor(jobScheduler, uiScheduler, repository);
+    }
+
+}

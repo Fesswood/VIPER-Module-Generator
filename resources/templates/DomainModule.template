@@ -1,0 +1,28 @@
+package goodline.info.androidservice.presentation.inject.main;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import javax.inject.Named;
+
+import dagger.Module;
+import dagger.Provides;
+import rx.Scheduler;
+
+/**
+ * Created by Ilia
+ * on 12.05.16
+ */
+@Module
+public class ##MODULENAME##Module extends DomainModule {
+
+    @Provides
+    @Named("##MODULENAME##Interactor")
+    public Interactor<##MODULENAME##> provideTaskListInteractor(
+            @Named(MainDomainModule.JOB) Scheduler jobScheduler,
+            @Named(MainDomainModule.UI) Scheduler uiScheduler,
+            @Named(MainDataModule.##MODULENAME##_REPOSITORY) ##MODULENAME##RepositoryImpl repository) {
+        return new ##MODULENAME##Interactor(jobScheduler, uiScheduler, repository);
+    }
+
+}

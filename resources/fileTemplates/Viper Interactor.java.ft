@@ -1,0 +1,43 @@
+#if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "")package ${PACKAGE_NAME};#end
+
+import android.util.Log;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import rx.Observable;
+import rx.Scheduler;
+import rx.Subscriber;
+
+#if (${BASE_PACKAGE_NAME} && ${BASE_PACKAGE_NAME} != "")
+import ${BASE_PACKAGE_NAME}.domain.common.Interactor;
+import ${BASE_PACKAGE_NAME}.presentation.inject.main.MainDataModule;
+import ${BASE_PACKAGE_NAME}.presentation.inject.main.MainDomainModule;
+import ${BASE_PACKAGE_NAME}.data.db.common.RepositoryBaseImpl;
+#end
+
+public class ${NAME}Interactor extends Interactor<${NAME}> {
+
+
+    private static final String TAG = ${NAME}Interactor.class.getSimpleName();
+    private final ${NAME}RepositoryBaseImpl mRepository;
+
+    @Inject
+    public ${NAME}Interactor(@Named(MainDomainModule.JOB) Scheduler jobScheduler,
+                              @Named(MainDomainModule.UI) Scheduler uiScheduler,
+                              @Named(MainDataModule.TASK_INFO) ${NAME}RepositoryImpl repository) {
+        super(jobScheduler, uiScheduler);
+        mRepository = repository;
+    }
+
+    @Override
+    protected Observable<${NAME}> prepareRequest() {
+                return Observable.empty();
+    }
+
+    @Override
+    public void unsubscribe() {
+        super.unsubscribe();
+        mRepository.close();
+    }
+}

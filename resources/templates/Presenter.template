@@ -1,0 +1,28 @@
+package ##CURRENTPACKAGE##;
+
+import android.util.Log;
+import javax.inject.Inject;
+import rx.Subscriber;
+
+
+public class ##MODULENAME##Presenter extends BasePresenter<##MODULENAME##View, ##MODULENAME##Router> {
+
+    private static final String TAG = ##MODULENAME##Presenter.class.getSimpleName();
+    private final ##MODULENAME##Interactor m##MODULENAME##Interactor;
+
+    @Inject
+    public ##MODULENAME##Presenter(##MODULENAME##Interactor ##MODULENAME##Interactor) {
+        m##MODULENAME##Interactor = ##MODULENAME##Interactor;
+    }
+
+
+    @Override
+    public void onStart() {
+
+    }
+
+    @Override
+    public void onStop() {
+        m##MODULENAME##Interactor.unsubscribe();
+    }
+}

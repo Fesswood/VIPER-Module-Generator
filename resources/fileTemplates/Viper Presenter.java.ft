@@ -1,0 +1,32 @@
+#if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "")package ${PACKAGE_NAME};#end
+
+import android.util.Log;
+import javax.inject.Inject;
+import rx.Subscriber;
+#if (${BASE_PACKAGE_NAME} && ${BASE_PACKAGE_NAME} != "")
+import ${BASE_PACKAGE_NAME}.R;
+import ${BASE_PACKAGE_NAME}.presentation.common.BasePresenter;
+#end
+
+public class ${NAME}Presenter extends BasePresenter<${NAME}View, ${NAME}Router> {
+
+    private static final String TAG = ${NAME}Presenter.class.getSimpleName();
+    private final ${NAME}Interactor m${NAME}Interactor;
+
+    @Inject
+    public ${NAME}Presenter(${NAME}Interactor ${NAME}Interactor) {
+        m${NAME}Interactor = ${NAME}Interactor;
+    }
+
+
+    @Override
+    public void onStart() {
+        Log.d(TAG, "onStart() called");
+    }
+
+    @Override
+    public void onStop() {
+        Log.d(TAG, "onStop() called");
+        m${NAME}Interactor.unsubscribe();
+    }
+}
