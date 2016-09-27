@@ -1,4 +1,8 @@
 #if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "")package ${PACKAGE_NAME};#end
 
+
+#if (${BASE_PACKAGE_NAME} && ${BASE_PACKAGE_NAME} != "")
+import ${BASE_PACKAGE_NAME}.presentation.common.BaseView;
+#end
 public interface ${NAME}View  extends BaseView{
 }

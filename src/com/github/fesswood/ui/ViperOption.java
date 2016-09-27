@@ -23,6 +23,7 @@ public class ViperOption implements CreateModuleView {
     private JTextField tfModelName;
     private JCheckBox cbFragmentPresenter;
     private JCheckBox cbActivity;
+    private JCheckBox cbDataModule;
     // private FormFilledListener formFilledListener;
 
 
@@ -94,10 +95,11 @@ public class ViperOption implements CreateModuleView {
         boolean isNeedRepository = cbRepository.isSelected();
         boolean isNeedActivity = cbActivity.isSelected();
         boolean isNeedFragmentPresenter = cbFragmentPresenter.isSelected();
+        boolean isNeedDataModule = cbDataModule.isSelected();
         String moduleName = tfModuleName.getText();
         String modelName = tfModelName.getText();
         return new ModuleMetaData(isNeedRepository, isNeedInteracor, isNeedActivity, isNeedFragmentPresenter,
-                                    moduleName, modelName);
+                isNeedDataModule, moduleName, modelName);
     }
 
     @Override

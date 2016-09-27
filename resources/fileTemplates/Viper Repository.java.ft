@@ -5,11 +5,12 @@ import rx.Scheduler;
 
 #if (${BASE_PACKAGE_NAME} && ${BASE_PACKAGE_NAME} != "")
 import ${BASE_PACKAGE_NAME}.data.db.common.RepositoryBaseImpl;
+import ${BASE_PACKAGE_NAME}.data.db.${LOWER_MODEL_NAME}.${MODEL_NAME};
 #end
 
 public class ${NAME}RepositoryImpl extends RepositoryBaseImpl<${MODEL_NAME}, String> {
 
-    private static final String TAG = TaskDescriptionRepositoryImpl.class.getSimpleName();
+    private static final String TAG = ${NAME}RepositoryImpl.class.getSimpleName();
 
     @Override
     public Observable<${MODEL_NAME}> getAllDb(Scheduler scheduler) {
@@ -18,7 +19,7 @@ public class ${NAME}RepositoryImpl extends RepositoryBaseImpl<${MODEL_NAME}, Str
     }
 
     @Override
-    public void saveAllDb(RESULT_TYPE models) {
+    public void saveAllDb(${MODEL_NAME} models) {
         Log.d(TAG, "saveAllDb() called with: models = [" + models + "]");
     }
 

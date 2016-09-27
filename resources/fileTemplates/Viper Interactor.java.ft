@@ -20,7 +20,7 @@ public class ${NAME}Interactor extends Interactor<${NAME}> {
 
 
     private static final String TAG = ${NAME}Interactor.class.getSimpleName();
-    private final ${NAME}RepositoryBaseImpl mRepository;
+    private final ${NAME}RepositoryImpl mRepository;
 
     @Inject
     public ${NAME}Interactor(@Named(MainDomainModule.JOB) Scheduler jobScheduler,

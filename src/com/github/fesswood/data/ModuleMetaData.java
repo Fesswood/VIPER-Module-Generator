@@ -8,17 +8,19 @@ public class ModuleMetaData {
     boolean isNeedInteractor;
     private boolean isNeedActivity;
     private boolean isNeedFragmentPresenter;
+    private boolean isNeedDataModule;
     String moduleName;
     private String repositoryModelName;
 
     public ModuleMetaData(boolean isNeedRepository,
                           boolean isNeedInteractor,
                           boolean isNeedActivity,
-                          boolean isNeedFragmentPresenter, String moduleName, String modelName) {
+                          boolean isNeedFragmentPresenter, boolean isNeedDataModule, String moduleName, String modelName) {
         this.isNeedRepository = isNeedRepository;
         this.isNeedInteractor = isNeedInteractor;
         this.isNeedActivity = isNeedActivity;
         this.isNeedFragmentPresenter = isNeedFragmentPresenter;
+        this.isNeedDataModule = isNeedDataModule;
         this.moduleName = moduleName;
         this.repositoryModelName = modelName;
     }
@@ -99,5 +101,13 @@ public class ModuleMetaData {
 
     public void setNeedFragmentPresenter(boolean needFragmentPresenter) {
         isNeedFragmentPresenter = needFragmentPresenter;
+    }
+
+    public boolean isNeedDataModule() {
+        return isNeedDataModule;
+    }
+
+    public void setNeedDataModule(boolean needDataModule) {
+        isNeedDataModule = needDataModule;
     }
 }

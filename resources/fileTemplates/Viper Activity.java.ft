@@ -14,7 +14,7 @@ import ${BASE_PACKAGE_NAME}.presentation.common.Layout;
 #parse("File Header.java")
 @Layout(id = R.layout.${LOWER_CASE_NAME}_activity_layout)
 public class ${NAME}Activity extends BaseActivity implements ${NAME}Router, ${NAME}ComponentProvider{
-    private static final String MAIN_TAG = "main_tag";
+    private static final String MAIN_TAG = ${NAME}Activity.class.getSimpleName();
 
 
     private ${NAME}Component m${NAME}Component;

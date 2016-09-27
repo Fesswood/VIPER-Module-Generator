@@ -53,6 +53,10 @@ public class ModuleGenerator implements BaseModuleGenerator {
         if (!moduleMetaData.isNeedActivity()) {
             templateFileNames.remove(Const.TemplateFileNames.FT_ACTIVITY_NAME);
         }
+        if (!moduleMetaData.isNeedDataModule()) {
+            templateFileNames.remove(Const.TemplateFileNames.FT_DATA_MODULE_NAME);
+            templateFileNames.remove(Const.TemplateFileNames.FT_DOMAIN_MODULE_NAME);
+        }
         if (!moduleMetaData.isNeedFragmentPresenter()) {
             templateFileNames.remove(Const.TemplateFileNames.FT_FRAGMENT_NAME);
             templateFileNames.remove(Const.TemplateFileNames.FT_PRESENTER_NAME);

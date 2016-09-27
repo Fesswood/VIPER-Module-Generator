@@ -38,6 +38,16 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
+
+    <internalFileTemplate name="Viper Activity"/>
+    <internalFileTemplate name="Viper DataModule"/>
+    <internalFileTemplate name="Viper DomainModule"/>
+    <internalFileTemplate name="Viper Fragment"/>
+    <internalFileTemplate name="Viper Presenter"/>
+    <internalFileTemplate name="Viper Interactor"/>
+    <internalFileTemplate name="Viper Repository"/>
+    <internalFileTemplate name="Viper Router"/>
+    <internalFileTemplate name="Viper View"/>
   </extensions>
 
   <actions>
