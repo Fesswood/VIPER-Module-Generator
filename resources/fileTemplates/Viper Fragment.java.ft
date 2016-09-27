@@ -12,11 +12,7 @@ import ${BASE_PACKAGE_NAME}.presentation.common.BasePresenter;
 import ${BASE_PACKAGE_NAME}.presentation.common.Layout;
 #end
 
-
-/**
- * Created by Ilia
- * on 12.05.16
- */
+//TODO: DO NOT FORGET ADD IT TO YOUR COMPONENT FOR CORRECT INJECTING
 #parse("File Header.java")
 @Layout(id = R.layout.fragment_${LOWER_CASE_NAME})
 public class  ${NAME}Fragment extends BaseFragment implements  ${NAME}View {
