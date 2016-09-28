@@ -51,10 +51,19 @@
   </extensions>
 
   <actions>
-    <!-- Add your actions here -->
-    <action id="CreateClassViper" class="com.github.fesswood.domain.action.ActionViperClassGenerator" text="Generate Viper Module">
-       <add-to-group group-id="NewGroup" anchor="last"/>
-    </action>
+    <group id="Viper.Group" text="Viper Module" description="Group for working with Viper modules" popup="true">
+      <!-- Add your actions here -->
+      <action id="Viper.CreateClassViper" class="com.github.fesswood.domain.action.CreateModuleHereAction" text="Create Module Here">
+
+      </action>
+      <separator/>
+      <action id="Viper.CreateModuleWithPackages" class="com.github.fesswood.domain.action.CreateModuleWithPackagesAction"
+              text="Create Module in Root"
+              description="Create VIPER module with packages in data domain and presentation layers">
+
+      </action>
+      <add-to-group group-id="NewGroup" anchor="last"/>
+    </group>
 
   </actions>
 

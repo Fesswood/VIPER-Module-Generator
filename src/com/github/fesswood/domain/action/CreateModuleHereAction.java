@@ -1,7 +1,7 @@
 package com.github.fesswood.domain.action;
 
 import com.github.fesswood.data.ModuleMetaData;
-import com.github.fesswood.domain.common.BaseModuleGenerator;
+import com.github.fesswood.domain.generator.common.IModuleGenerator;
 import com.github.fesswood.domain.generator.ModuleGenerator;
 import com.github.fesswood.ui.ViperOption;
 import com.github.fesswood.ui.common.CreateModuleView;
@@ -19,11 +19,12 @@ import com.intellij.psi.impl.file.PsiDirectoryFactoryImpl;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.io.IOException;
 
 /**
  * Created by fesswood on 21.09.16.
  */
-public class ActionViperClassGenerator extends AnAction {
+public class CreateModuleHereAction extends AnAction {
 
     @Override
     public void actionPerformed(AnActionEvent e) {
@@ -70,10 +71,14 @@ public class ActionViperClassGenerator extends AnAction {
         protected void doOKAction() {
             System.out.println("TestDialog.processDoNotAskOnOk");
             ModuleMetaData moduleMetaData = createModuleView.getModuleMetaData();
-            BaseModuleGenerator generator = new ModuleGenerator(project);
+            IModuleGenerator generator = new ModuleGenerator(project);
             PsiDirectoryFactory instance = PsiDirectoryFactoryImpl.getInstance(project);
             generator.init(moduleMetaData, PsiFileFactory.getInstance(project), instance.createDirectory(selectedDirectory));
-            generator.generate();
+            try {
+                generator.generate();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             super.doOKAction();
         }
     }

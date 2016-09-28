@@ -1,5 +1,6 @@
 package com.github.fesswood.ui;
 
+import com.github.fesswood.data.Const;
 import com.github.fesswood.data.ModuleMetaData;
 import com.github.fesswood.ui.common.CreateModuleView;
 import com.intellij.openapi.ui.ValidationInfo;
@@ -9,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
 import java.awt.event.*;
 
 /**
@@ -73,17 +73,21 @@ public class ViperOption implements CreateModuleView {
     @Override
     @Nullable
     public ValidationInfo validate() {
-        String text = tfModuleName.getText();
+        String moduleNameText = tfModuleName.getText();
+        String modelNameText = tfModelName.getText();
         String badChars = "/^[^/:*?\"<>\\|]+$/"; // forbidden characters \ / : * ? " < > |"
         String dot = "/^\\./"; // cannot start with dot (.)"
         String badNames = "/^(nul|prn|con|lpt[0-9]|com[0-9])(.|$)/i"; // forbidden file names"
 
 
-        if (text.isEmpty()) {
-            return new ValidationInfo("Имя модуля не может быть пустым!", tfModuleName);
+        if (moduleNameText.isEmpty()) {
+            return new ValidationInfo(Const.string.validation.emptyModuleName, tfModuleName);
         }
-        if (text.matches(badChars) || text.startsWith(dot) || text.matches(badNames)) {
-            return new ValidationInfo("Имя модуля не дебильным!", tfModuleName);
+        if (moduleNameText.matches(badChars) || moduleNameText.startsWith(dot) || moduleNameText.matches(badNames)) {
+            return new ValidationInfo(Const.string.validation.incorrectModuleName, tfModuleName);
+        }
+        if(modelNameText.isEmpty() && cbRepository.isSelected()){
+            return new ValidationInfo(Const.string.validation.emptyModelName, tfModelName);
         }
         return null;
     }

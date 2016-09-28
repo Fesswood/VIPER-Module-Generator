@@ -26,7 +26,7 @@ public class  ${NAME}Fragment extends BaseFragment implements  ${NAME}View {
         setRetainInstance(true);
          ${NAME}Activity ${LOWER_NAME}Activity = ( ${NAME}Activity) getActivity();
         //noinspection unchecked
-        getPresenter().setRouter( ${LOWER_NAME}Activity);
+        getPresenter().setRouter(${LOWER_NAME}Activity);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class  ${NAME}Fragment extends BaseFragment implements  ${NAME}View {
     }
 
     public ${NAME}ActivityComponent getActivityComponent() {
-        return (( ${NAME}Activity) getActivity()).getComponent();
+        return ((${NAME}Activity) getActivity()).getComponent();
     }
 
 }
