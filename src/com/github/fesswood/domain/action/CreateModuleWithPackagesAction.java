@@ -73,10 +73,9 @@ public class CreateModuleWithPackagesAction extends AnAction {
             System.out.println("TestDialog.processDoNotAskOnOk");
             ModuleMetaData moduleMetaData = createModuleView.getModuleMetaData();
             IMultiDirModuleGenerator generator = new MultiDirModuleGeneratorImpl(project);
-            PackageService packageService = new PackageService(project, moduleMetaData.getModuleName());
-            generator.init(moduleMetaData, PsiFileFactory.getInstance(project), packageService.getPackages());
-
             try {
+                PackageService packageService = new PackageService(project,  moduleMetaData.getModuleName());
+                generator.init(moduleMetaData, PsiFileFactory.getInstance(project), packageService.getPackages());
                 generator.generate();
             } catch (IOException e) {
                 e.printStackTrace();

@@ -16,6 +16,7 @@ import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
@@ -46,6 +47,7 @@ public abstract class BaseModuleGeneratorImpl implements IModuleGenerator {
         }
         if (!moduleMetaData.isNeedRepository()) {
             templateFileNames.remove(Const.templateFileNames.FT_REPOSITORY_NAME);
+            templateFileNames.remove(Const.templateFileNames.FT_MODEL_NAME);
         }
         if (!moduleMetaData.isNeedActivity()) {
             templateFileNames.remove(Const.templateFileNames.FT_ACTIVITY_NAME);
@@ -53,6 +55,7 @@ public abstract class BaseModuleGeneratorImpl implements IModuleGenerator {
         if (!moduleMetaData.isNeedDataModule()) {
             templateFileNames.remove(Const.templateFileNames.FT_DATA_MODULE_NAME);
             templateFileNames.remove(Const.templateFileNames.FT_DOMAIN_MODULE_NAME);
+            templateFileNames.remove(Const.templateFileNames.FT_COMPONENT_NAME);
         }
         if (!moduleMetaData.isNeedFragmentPresenter()) {
             templateFileNames.remove(Const.templateFileNames.FT_FRAGMENT_NAME);
@@ -74,17 +77,6 @@ public abstract class BaseModuleGeneratorImpl implements IModuleGenerator {
         return properties;
     }
 
-    protected String getRootPackage() throws IOException {
-        VirtualFile projectManifest = getProjectManifest(getSelectedDirectory().getVirtualFile());
-        String content = new String(projectManifest.contentsToByteArray());
-        Pattern pattern = Pattern.compile("package=\"(.*)\"");
-        Matcher matcher = pattern.matcher(content);
-        if(matcher.find()){
-            return matcher.group(1);
-        }
-        return "";
-    }
-
     @NotNull
     protected String getModuleLowerName() {
         String moduleName = getModuleMetaData().getModuleName();
@@ -97,13 +89,6 @@ public abstract class BaseModuleGeneratorImpl implements IModuleGenerator {
         String regexp = "([\\/\\\\])";
         String[] packages = directoryPath.replaceAll(regexp, ".").split("src\\.main\\.java\\.");
         return packages.length > 1 ? packages[1] : "";
-    }
-
-    protected VirtualFile getProjectManifest(VirtualFile selectedDirectory) {
-        if (!selectedDirectory.getName().toLowerCase().equals("main")) {
-            return getProjectManifest(selectedDirectory.getParent());
-        }
-        return selectedDirectory.findChild("AndroidManifest.xml");
     }
 
     protected TemplateImpl applyFileTemplate(Project project,
@@ -126,6 +111,9 @@ public abstract class BaseModuleGeneratorImpl implements IModuleGenerator {
     protected String getTemplateContent(String templateName, Properties properties) throws IOException {
         FileTemplateManager manager = FileTemplateManager.getDefaultInstance();
         FileTemplate fileTemplate = manager.getTemplate(templateName);
+        if(fileTemplate  == null){
+            throw new FileNotFoundException("Template with name " + templateName +" not found!");
+        }
         Properties allProperties = manager.getDefaultProperties();
         allProperties.putAll(properties);
         return fileTemplate.getText(allProperties);
@@ -146,10 +134,11 @@ public abstract class BaseModuleGeneratorImpl implements IModuleGenerator {
 
     protected void createTemplateFile(TemplateImpl template, final String fileSuffix) {
         String preparedFileSuffix = prepareFileSuffix(fileSuffix);
+        String prefix = prepareFilePrefix(fileSuffix);
         PsiFile fileFromText = getPsiFileFactory().createFileFromText(
-                getModuleMetaData().getModuleName() + preparedFileSuffix + ".java",
+                prefix + preparedFileSuffix + ".java",
                 FileTypeManagerImpl.getInstance().getFileTypeByExtension("java"), template.getTemplateText());
-        new ReformatCodeProcessor(getProject(), fileFromText, null, false).run();
+      //  new ReformatCodeProcessor(getProject(), fileFromText, null, false).run();
         getSelectedDirectory().add(fileFromText);
     }
 
@@ -158,10 +147,27 @@ public abstract class BaseModuleGeneratorImpl implements IModuleGenerator {
         switch (fileSuffix) {
             case "Repository":
                 return "RepositoryImpl";
+            case "Model":
+                return "";
             default:
                 return fileSuffix;
         }
     }
+
+    /**
+     * Check file prefix for avoiding double prefix in model file like TaskTask.java
+     * @param filePrefix
+     * @return
+     */
+    @NotNull
+    protected String prepareFilePrefix(String filePrefix) {
+        String prefix = getModuleMetaData().getModuleName();
+        if(prefix.toLowerCase().equals(prepareFileSuffix(filePrefix).toLowerCase())){
+            prefix = "";
+        }
+        return prefix;
+    }
+
 
     public Project getProject() {
         return project;

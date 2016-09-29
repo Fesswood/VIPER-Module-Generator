@@ -1,7 +1,10 @@
 package com.github.fesswood.domain.Utils;
 
+import com.github.fesswood.data.Const;
 import com.github.fesswood.data.Const.moduleNames;
 import com.intellij.ide.util.PackageUtil;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -9,11 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.file.PsiDirectoryFactory;
-import com.intellij.psi.impl.file.PsiDirectoryFactoryImpl;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.*;
@@ -26,9 +25,9 @@ import static java.util.stream.Collectors.toMap;
 public class PackageService {
 
     private Project project;
-    private final ModuleManager moduleManager;
+    private ModuleManager moduleManager;
     private String moduleName;
-    private boolean isDifferntModules = false;
+    private boolean isDifferentModules = false;
 
     public PackageService(Project project, String moduleName) {
         this.project = project;
@@ -42,72 +41,77 @@ public class PackageService {
         if (modules.length > 1) {
             Map<String, Module> collect = getModules(modules, standardModuleNames);
             // check that we have 3 module data domain and presentation
-            isDifferntModules = true;
+            isDifferentModules = true;
             return collect.size() == 3;
         }
         Module module = modules[0];
-        ModuleHolder moduleHolder = new ModuleHolder(module).invoke();
+        ModuleHolder moduleHolder = null;
+        try {
+            moduleHolder = new ModuleHolder(module).invoke();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        boolean isModuleExist = moduleHolder != null;
+        PsiDirectory data = isModuleExist ? moduleHolder.getData() : null;
+        PsiDirectory domain = isModuleExist ? moduleHolder.getDomain() : null;
+        PsiDirectory presentation = isModuleExist ? moduleHolder.getPresentation() : null;
+        return data != null && domain != null && presentation != null;
+    }
+
+    public HashMap<String, PsiDirectory> getPackages() throws IOException {
+        Map<String, Module> modules = getModules(moduleManager.getModules(), moduleNames.getStandardNames());
+        if (isViperArchitecture() && isDifferentModules) {
+            return getDirectoriesForModules(modules);
+        }
+        return getDirectoriesForOneModule();
+    }
+
+    @NotNull
+    private HashMap<String, PsiDirectory> getDirectoriesForOneModule() throws IOException {
+        ModuleHolder moduleHolder = new ModuleHolder(moduleManager.getModules()[0]).invoke();
         PsiDirectory data = moduleHolder.getData();
         PsiDirectory domain = moduleHolder.getDomain();
         PsiDirectory presentation = moduleHolder.getPresentation();
-        return data != null && domain != null && presentation != null;
+        return new HashMap<String, PsiDirectory>() {
+            {
+                put(moduleNames.DATA_ROOT_PACKAGE, data);
+                put(moduleNames.DOMAIN_ROOT_PACKAGE, domain);
+                put(moduleNames.PRESENTATION_ROOT_PACKAGE, presentation);
+            }
+        };
+    }
+
+    @NotNull
+    private HashMap<String, PsiDirectory> getDirectoriesForModules(Map<String, Module> modules) throws IOException {
+        PsiDirectory rootDataPackage = getModuleDirectory(modules.get(moduleNames.DATA_MODULE_NAME),
+                PackageUtils.getRootPackage(modules.get(moduleNames.DATA_MODULE_NAME)));
+        rootDataPackage = PackageUtil.findOrCreateSubdirectory(rootDataPackage, moduleNames.DATA_ROOT_PACKAGE);
+
+        PsiDirectory rootDomainPackage = getModuleDirectory(modules.get(moduleNames.DOMAIN_MODULE_NAME),
+                PackageUtils.getRootPackage(modules.get(moduleNames.DOMAIN_MODULE_NAME)));
+
+        PsiDirectory rootPresentPackage = getModuleDirectory(modules.get(moduleNames.PRESENTATION_MODULE_NAME),
+                PackageUtils.getRootPackage(modules.get(moduleNames.PRESENTATION_MODULE_NAME)));
+
+        final PsiDirectory finalRootDataPackage = rootDataPackage;
+        return new HashMap<String, PsiDirectory>() {
+            {
+                put(moduleNames.DATA_ROOT_PACKAGE, finalRootDataPackage);
+                put(moduleNames.DOMAIN_ROOT_PACKAGE, rootDomainPackage);
+                put(moduleNames.PRESENTATION_ROOT_PACKAGE, rootPresentPackage);
+            }
+        };
+    }
+
+    private PsiDirectory getModuleDirectory(Module module, String rootPackage) throws IOException {
+        return PackageUtil.findPossiblePackageDirectoryInModule(module,
+                rootPackage);
     }
 
     private Map<String, Module> getModules(Module[] modules, List<String> standardModuleNames) {
         return Arrays.asList(modules).stream()
                 .filter(standardModuleNames::contains)
                 .collect(toMap(Module::getName, module -> module));
-    }
-
-    public List<PsiDirectory> getPackages() {
-        Map<String, Module> modules = getModules(moduleManager.getModules(), moduleNames.getStandardNames());
-        if (isViperArchitecture() && isDifferntModules) {
-            Module dataProjectModule = modules.get("data");
-            Module domainProjectModule = modules.get("domain");
-            Module presProjectModule = modules.get("presentation");
-            PsiDirectory viperDataRootDir = PackageUtil
-                    .findPossiblePackageDirectoryInModule(dataProjectModule, moduleNames.DATA_ROOT_PACKAGE);
-            PsiDirectory viperDomainRootDir = PackageUtil
-                    .findPossiblePackageDirectoryInModule(domainProjectModule, moduleNames.DATA_ROOT_PACKAGE);
-            PsiDirectory viperPresentationRootDir = PackageUtil
-                    .findPossiblePackageDirectoryInModule(presProjectModule, moduleNames.DATA_ROOT_PACKAGE);
-            PsiDirectory data = createViperModuleDir(viperDataRootDir, dataProjectModule.getModuleFile());
-            PsiDirectory domain = createViperModuleDir(viperDomainRootDir, domainProjectModule.getModuleFile());
-            PsiDirectory presentation = createViperModuleDir(viperPresentationRootDir, presProjectModule.getModuleFile());
-            return Arrays.asList(data, domain, presentation);
-        }
-        Module module = moduleManager.getModules()[0];
-        ModuleHolder moduleHolder = new ModuleHolder(module).invoke();
-        PsiDirectory data = moduleHolder.getData();
-        PsiDirectory domain = moduleHolder.getDomain();
-        PsiDirectory presentation = moduleHolder.getPresentation();
-        return Arrays.asList(createViperModuleDir(data, module.getModuleFile()),
-                createViperModuleDir(domain, module.getModuleFile()),
-                createViperModuleDir(presentation, module.getModuleFile()));
-
-    }
-
-    private PsiDirectory createViperModuleDir(@Nullable PsiDirectory viperRootDir, VirtualFile moduleDir) {
-        if (moduleDir == null) {
-            throw new IllegalArgumentException("Directory of project module is null!");
-        }
-
-        PsiDirectoryFactory psiDirectoryFactory = PsiDirectoryFactoryImpl.getInstance(project);
-        PsiDirectory psiDirectory = WriteCommandAction.runWriteCommandAction(project, (Computable<PsiDirectory>) () -> {
-            try {
-                PsiDirectory db = viperRootDir;
-                if (db == null) {
-                    db = psiDirectoryFactory
-                            .createDirectory(moduleDir.createChildData(this, moduleNames.DATA_ROOT_PACKAGE));
-                }
-                return psiDirectoryFactory.createDirectory(db.getVirtualFile().createChildData(this, moduleName));
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-        });
-
-        return psiDirectory;
     }
 
     private class ModuleHolder {
@@ -132,12 +136,21 @@ public class PackageService {
             return presentation;
         }
 
-        public ModuleHolder invoke() {
-            PsiDirectoryFactory psiDirectoryFactory = PsiDirectoryFactoryImpl.getInstance(project);
-            PsiDirectory file = PsiManager.getInstance(project).findDirectory(module.getModuleFile());
-            data = PackageUtil.findOrCreateDirectoryForPackage(module, "data", file, false);
-            domain = PackageUtil.findOrCreateDirectoryForPackage(module, "domain", file, false);
-            presentation = PackageUtil.findOrCreateDirectoryForPackage(module, "presentation", file, false);
+        public ModuleHolder invoke() throws IOException {
+            PsiDirectory rootViperPackage = getModuleDirectory(module, PackageUtils.getRootPackage(module));
+            // get root of data dir
+            data = WriteCommandAction.runWriteCommandAction(project, (Computable<PsiDirectory>) () ->
+                    PackageUtil.findOrCreateSubdirectory(rootViperPackage, Const.moduleNames.DATA_MODULE_NAME));
+            // get db dir in data dir
+            data = WriteCommandAction.runWriteCommandAction(project, (Computable<PsiDirectory>) () ->
+                    PackageUtil.findOrCreateSubdirectory(data, Const.moduleNames.DATA_ROOT_PACKAGE));
+
+            domain = WriteCommandAction.runWriteCommandAction(project, (Computable<PsiDirectory>) () ->
+                    PackageUtil.findOrCreateSubdirectory(rootViperPackage, Const.moduleNames.DOMAIN_MODULE_NAME));
+
+            presentation = WriteCommandAction.runWriteCommandAction(project, (Computable<PsiDirectory>) () ->
+                    PackageUtil.findOrCreateSubdirectory(rootViperPackage, Const.moduleNames.PRESENTATION_MODULE_NAME));
+
             return this;
         }
     }

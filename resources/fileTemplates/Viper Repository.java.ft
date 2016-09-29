@@ -5,7 +5,7 @@ import rx.Scheduler;
 
 #if (${BASE_PACKAGE_NAME} && ${BASE_PACKAGE_NAME} != "")
 import ${BASE_PACKAGE_NAME}.data.db.common.RepositoryBaseImpl;
-import ${BASE_PACKAGE_NAME}.data.db.${LOWER_MODEL_NAME}.${MODEL_NAME};
+import ${BASE_PACKAGE_NAME}.data.db.${NAME}.${MODEL_NAME};
 #end
 
 public class ${NAME}RepositoryImpl extends RepositoryBaseImpl<${MODEL_NAME}, String> {

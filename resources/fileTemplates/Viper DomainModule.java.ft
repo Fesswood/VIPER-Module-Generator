@@ -23,8 +23,8 @@ public class ${NAME}DomainModule extends DomainModule {
     @Provides
     @Named("${NAME}Interactor")
     public Interactor<${NAME}> provideTaskListInteractor(
-            @Named(${NAME}DomainModule.JOB) Scheduler jobScheduler,
-            @Named(${NAME}DomainModule.UI) Scheduler uiScheduler,
+            @Named(DomainModule.JOB) Scheduler jobScheduler,
+            @Named(DomainModule.UI) Scheduler uiScheduler,
             @Named(${NAME}DataModule.${UPPER_CASE_NAME}_REPOSITORY) ${NAME}Repository repository) {
         return new ${NAME}Interactor(jobScheduler, uiScheduler, repository);
     }

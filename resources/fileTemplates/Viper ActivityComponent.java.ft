@@ -1,0 +1,12 @@
+#if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "")package ${PACKAGE_NAME};#end
+
+import javax.inject.Singleton;
+
+import dagger.Component;
+
+
+@Singleton
+@Component(modules = {${NAME}DomainModule.class, ${NAME}DataModule.class})
+public interface ${NAME}ActivityComponent {
+    void inject(${NAME}MainFragment mainFragment);
+}

@@ -1,0 +1,14 @@
+#if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "")package ${PACKAGE_NAME};#end
+
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
+
+
+#if (${BASE_PACKAGE_NAME} && ${BASE_PACKAGE_NAME} != "")
+#end
+public class ${MODEL_NAME} extends RealmObject{
+    @PrimaryKey
+    private Integer id;
+
+}

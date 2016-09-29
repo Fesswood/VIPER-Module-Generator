@@ -2,9 +2,13 @@ package com.github.fesswood.domain.generator;
 
 import com.github.fesswood.data.Const;
 import com.github.fesswood.data.ModuleMetaData;
+import com.github.fesswood.domain.Utils.PackageUtils;
 import com.github.fesswood.domain.generator.common.BaseModuleGeneratorImpl;
 import com.intellij.codeInsight.template.impl.TemplateImpl;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 
@@ -33,15 +37,17 @@ public class ModuleGenerator extends BaseModuleGeneratorImpl {
     @Override
     public void generate() throws IOException {
         Properties properties = getProperties();
+        Project project = getProject();
+        Module curModule = ModuleUtil.findModuleForFile(getSelectedDirectory().getVirtualFile(), project);
         try {
-            properties.put("BASE_PACKAGE_NAME", getRootPackage());
+            properties.put("BASE_PACKAGE_NAME", PackageUtils.getRootPackage(curModule));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        WriteCommandAction.runWriteCommandAction(getProject(), () -> {
+        WriteCommandAction.runWriteCommandAction(project, () -> {
             try {
                 for (String templateName : getTemplateFileNames()) {
-                    TemplateImpl template = applyFileTemplate(getProject(), templateName, properties);
+                    TemplateImpl template = applyFileTemplate(project, templateName, properties);
                     createTemplateFile(template, templateName.replace("Viper ", ""));
                 }
             } catch (IOException e) {
