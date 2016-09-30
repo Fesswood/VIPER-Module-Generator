@@ -3,14 +3,11 @@ package com.github.fesswood.domain.Utils;
 import com.github.fesswood.data.Const;
 import com.github.fesswood.data.Const.moduleNames;
 import com.intellij.ide.util.PackageUtil;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,32 +32,19 @@ public class PackageService {
         moduleManager = ModuleManager.getInstance(project);
     }
 
-    public boolean isViperArchitecture() {
+    public boolean isCleanArchitecture() {
         Module[] modules = moduleManager.getModules();
         List<String> standardModuleNames = moduleNames.getStandardNames();
-        if (modules.length > 1) {
-            Map<String, Module> collect = getModules(modules, standardModuleNames);
-            // check that we have 3 module data domain and presentation
-            isDifferentModules = true;
-            return collect.size() == 3;
-        }
-        Module module = modules[0];
-        ModuleHolder moduleHolder = null;
-        try {
-            moduleHolder = new ModuleHolder(module).invoke();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        boolean isModuleExist = moduleHolder != null;
-        PsiDirectory data = isModuleExist ? moduleHolder.getData() : null;
-        PsiDirectory domain = isModuleExist ? moduleHolder.getDomain() : null;
-        PsiDirectory presentation = isModuleExist ? moduleHolder.getPresentation() : null;
-        return data != null && domain != null && presentation != null;
+        Map<String, Module> collect = getModules(modules, standardModuleNames);
+        // check that we have 3 module data domain and presentation
+        return collect.size() == 3 && collect.get(moduleNames.DATA_MODULE_NAME) != null
+                && collect.get(moduleNames.DOMAIN_MODULE_NAME) != null
+                && collect.get(moduleNames.PRESENTATION_MODULE_NAME) != null;
     }
 
     public HashMap<String, PsiDirectory> getPackages() throws IOException {
         Map<String, Module> modules = getModules(moduleManager.getModules(), moduleNames.getStandardNames());
-        if (isViperArchitecture() && isDifferentModules) {
+        if (isCleanArchitecture()) {
             return getDirectoriesForModules(modules);
         }
         return getDirectoriesForOneModule();
@@ -68,10 +52,12 @@ public class PackageService {
 
     @NotNull
     private HashMap<String, PsiDirectory> getDirectoriesForOneModule() throws IOException {
-        ModuleHolder moduleHolder = new ModuleHolder(moduleManager.getModules()[0]).invoke();
+        Module module = moduleManager.findModuleByName("app");
+        ModuleHolder moduleHolder = new ModuleHolder(module).invoke();
         PsiDirectory data = moduleHolder.getData();
         PsiDirectory domain = moduleHolder.getDomain();
         PsiDirectory presentation = moduleHolder.getPresentation();
+
         return new HashMap<String, PsiDirectory>() {
             {
                 put(moduleNames.DATA_ROOT_PACKAGE, data);

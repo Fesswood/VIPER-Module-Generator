@@ -1,12 +1,18 @@
 <idea-plugin version="2">
   <id>com.github.fesswood.ViperModuleGenerator</id>
   <name>VIPER Module Generator</name>
-  <version>1.0</version>
+  <version>1.1</version>
   <vendor email="fesswoodwork@gmail.com" url="http://www.github.com/fesswood">Fesswood</vendor>
 
   <description><![CDATA[
-      The plugin generate all class for module by VIPER architecture for Android project(or Clean Architecture).<br>
+      The plugin generate all class for module by <a href = "http://luboganev.github.io/post/clean-architecture-pt2/">VIPER architecture</a>
+      for Android project(or <a href = "http://fernandocejas.com/2014/09/03/architecting-android-the-clean-way/">Clean Architecture<a/>).<br>
       You can customize any template for class generation or use it separately.</br>
+      THe plugin has two action:
+      <ul>
+      <li>Generate module's classes in selected directory</li>
+      <li>Generate module classes in separate directory or modules</li>
+      </ul>
       The plugin generate the next classes of module:
       <ul>
       <li>Activity</li>
@@ -23,7 +29,11 @@
     ]]></description>
 
   <change-notes><![CDATA[
-      Added base functionality of module creation.
+    <ul>
+      <li>1.1 Added Action for generate module in separate packages or modules(data , domain , presentation)</li>
+      <li>1.0 Added base functionality of module creation.</li>
+      </ul>
+      A
     ]]>
   </change-notes>
 

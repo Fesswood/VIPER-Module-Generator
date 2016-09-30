@@ -20,7 +20,7 @@ public class PackageUtils {
     public static String getRootPackage(Module module) throws IOException {
         VirtualFile projectManifest = getProjectManifest(module);
         if (projectManifest == null) {
-            throw new IOException("Can't find projectManifest File!");
+            throw new IOException("Can't find projectManifest File! in root package" );
         }
         String content = new String(projectManifest.contentsToByteArray());
         Pattern pattern = Pattern.compile("package=\"(.*)\"");

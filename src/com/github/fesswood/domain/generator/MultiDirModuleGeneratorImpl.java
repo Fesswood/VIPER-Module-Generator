@@ -76,7 +76,8 @@ public class MultiDirModuleGeneratorImpl extends BaseMultiDirModuleGeneratorImpl
             try {
                 //Find or create viper module folder exist in data.db package and next setup it as selected dir
                 PsiDirectory rootDir = moduleDirectories.get(moduleNames.PRESENTATION_ROOT_PACKAGE);
-                PsiDirectory moduleDir = PackageUtil.findOrCreateSubdirectory(rootDir, moduleNames.INJECTION_ROOT_PACKAGE);
+                PsiDirectory injectDir = PackageUtil.findOrCreateSubdirectory(rootDir, moduleNames.INJECTION_ROOT_PACKAGE);
+                PsiDirectory moduleDir = PackageUtil.findOrCreateSubdirectory(injectDir, getModuleMetaData().getModuleName());
                 setSelectedDirectory(moduleDir);
                 String templateName = Const.templateFileNames.FT_COMPONENT_NAME;
                 TemplateImpl template = applyFileTemplate(getProject(), templateName, getProperties());
@@ -148,7 +149,7 @@ public class MultiDirModuleGeneratorImpl extends BaseMultiDirModuleGeneratorImpl
                 setSelectedDirectory(moduleDir);
                 String templateName = Const.templateFileNames.FT_INTERACTOR_NAME;
                 TemplateImpl template = applyFileTemplate(getProject(), templateName, getProperties());
-                createTemplateFile(template, templateName.replace("Viper ", ""));
+                safeCreateTemplateFile(templateName, template);
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -38,12 +38,6 @@ public class ModuleGenerator extends BaseModuleGeneratorImpl {
     public void generate() throws IOException {
         Properties properties = getProperties();
         Project project = getProject();
-        Module curModule = ModuleUtil.findModuleForFile(getSelectedDirectory().getVirtualFile(), project);
-        try {
-            properties.put("BASE_PACKAGE_NAME", PackageUtils.getRootPackage(curModule));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         WriteCommandAction.runWriteCommandAction(project, () -> {
             try {
                 for (String templateName : getTemplateFileNames()) {

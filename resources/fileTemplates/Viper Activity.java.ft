@@ -17,7 +17,7 @@ public class ${NAME}Activity extends BaseActivity implements ${NAME}Router, ${NA
     private static final String MAIN_TAG = ${NAME}Activity.class.getSimpleName();
 
 
-    private ${NAME}Component m${NAME}Component;
+    private ${NAME}ActivityComponent m${NAME}Component;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -2,12 +2,15 @@ package com.github.fesswood.domain.generator.common;
 
 import com.github.fesswood.data.Const;
 import com.github.fesswood.data.ModuleMetaData;
+import com.github.fesswood.domain.Utils.PackageUtils;
 import com.intellij.codeInsight.actions.ReformatCodeProcessor;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.TemplateImpl;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.fileTypes.impl.FileTypeManagerImpl;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -39,7 +42,6 @@ public abstract class BaseModuleGeneratorImpl implements IModuleGenerator {
     }
 
 
-
     protected void removeUnnecessaryModules(ModuleMetaData moduleMetaData) {
         List<String> templateFileNames = getTemplateFileNames();
         if (!moduleMetaData.isNeedInteractor()) {
@@ -66,14 +68,16 @@ public abstract class BaseModuleGeneratorImpl implements IModuleGenerator {
 
 
     @NotNull
-    protected Properties getProperties() {
+    protected Properties getProperties() throws IOException {
         Properties properties = new Properties();
+        Module curModule = ModuleUtil.findModuleForFile(getSelectedDirectory().getVirtualFile(), project);
         properties.put("NAME", getModuleMetaData().getModuleName());
         properties.put("UPPER_CASE_NAME", getModuleMetaData().getModuleName().toUpperCase());
         properties.put("LOWER_CASE_NAME", getModuleMetaData().getModuleName().toLowerCase());
         properties.put("MODEL_NAME", getModuleMetaData().getRepositoryModelName());
         properties.put("LOWER_NAME", getModuleLowerName());
         properties.put("PACKAGE_NAME", getPackage());
+        properties.put("BASE_PACKAGE_NAME", PackageUtils.getRootPackage(curModule));
         return properties;
     }
 
@@ -111,8 +115,8 @@ public abstract class BaseModuleGeneratorImpl implements IModuleGenerator {
     protected String getTemplateContent(String templateName, Properties properties) throws IOException {
         FileTemplateManager manager = FileTemplateManager.getDefaultInstance();
         FileTemplate fileTemplate = manager.getTemplate(templateName);
-        if(fileTemplate  == null){
-            throw new FileNotFoundException("Template with name " + templateName +" not found!");
+        if (fileTemplate == null) {
+            throw new FileNotFoundException("Template with name " + templateName + " not found!");
         }
         Properties allProperties = manager.getDefaultProperties();
         allProperties.putAll(properties);
@@ -138,7 +142,7 @@ public abstract class BaseModuleGeneratorImpl implements IModuleGenerator {
         PsiFile fileFromText = getPsiFileFactory().createFileFromText(
                 prefix + preparedFileSuffix + ".java",
                 FileTypeManagerImpl.getInstance().getFileTypeByExtension("java"), template.getTemplateText());
-      //  new ReformatCodeProcessor(getProject(), fileFromText, null, false).run();
+        //  new ReformatCodeProcessor(getProject(), fileFromText, null, false).run();
         getSelectedDirectory().add(fileFromText);
     }
 
@@ -156,13 +160,14 @@ public abstract class BaseModuleGeneratorImpl implements IModuleGenerator {
 
     /**
      * Check file prefix for avoiding double prefix in model file like TaskTask.java
+     *
      * @param filePrefix
      * @return
      */
     @NotNull
     protected String prepareFilePrefix(String filePrefix) {
         String prefix = getModuleMetaData().getModuleName();
-        if(prefix.toLowerCase().equals(prepareFileSuffix(filePrefix).toLowerCase())){
+        if (prefix.toLowerCase().equals(prepareFileSuffix(filePrefix).toLowerCase())) {
             prefix = "";
         }
         return prefix;
